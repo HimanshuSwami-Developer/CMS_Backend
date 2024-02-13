@@ -1,3 +1,4 @@
+const fs = require("fs");
 const bcrypt = require('bcrypt');
 const Student = require('../models/studentSchema.js');
 const Subject = require('../models/subjectSchema.js');
@@ -6,6 +7,10 @@ const studentRegister = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(req.body.password, salt);
+        //change
+
+     console.log("success login");
+        // const { photoUrl } = req.body.photoUrl;
 
         const existingStudent = await Student.findOne({
             rollNum: req.body.rollNum,
@@ -14,6 +19,7 @@ const studentRegister = async (req, res) => {
         });
 
         if (existingStudent) {
+            
             res.send({ message: 'Roll Number already exists' });
         }
         else {
@@ -22,14 +28,26 @@ const studentRegister = async (req, res) => {
                 school: req.body.adminID,
                 password: hashedPass
             });
+            //change
+            console.log('photo set')
+            // if (!photoUrl) {
+            //     res.status(400);
+            //     throw new Error("Photo URL is required");
+            // }
+            // //  {   student.photo.data = fs.readFileSync(photo.path);
+            // //     student.photo.contentType = photo.type;
+            // //   }
 
             let result = await student.save();
 
             result.password = undefined;
             res.send(result);
+            console.log(result)
+           
         }
-    } catch (err) {
-        res.status(500).json(err);
+    } 
+    catch (err) {
+        res.status(500).json(err.message);
     }
 };
 
